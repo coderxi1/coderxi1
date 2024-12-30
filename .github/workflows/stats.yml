@@ -1,0 +1,40 @@
+name: Update GitHub Stats Gist
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *'
+  push:
+    branches: master
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@master
+        with:
+          node-version: 20
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Github stats box
+        run: npx github-stats-box@1
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GIST_ID: bf052a07e15ea8db649ad2b3837870ea
+          ALL_COMMITS: true
+          K_FORMAT: false
+
+      - name: Github languages Stats box
+        run: npx github-lang-box@1
+        env:
+          GIST_ID: 28d64f49ec519a97e5d3f1fef8dc3505
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_USERNAME: coderxi1
+          EXCLUDE: ${{ vars.EXCLUDE }}
+          EXCLUDE_REPO: ${{ vars.EXCLUDE_REPO }}
+          DESCRIPTION: "Language Stats"
